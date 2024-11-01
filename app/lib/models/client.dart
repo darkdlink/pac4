@@ -1,4 +1,4 @@
-import 'anamneseform.dart';
+import 'package:app/models/anamnesis_form.dart';
 
 class Client {
   String id;

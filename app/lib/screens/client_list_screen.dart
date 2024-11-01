@@ -48,7 +48,7 @@ late Future<List<Client>> _clientListFuture;//inicializar ao criar a tela
     _searchController.addListener(_onSearchChanged);
 
 
-  _clientListFuture = _clientService.getAllClients(); // Buscar a lista de clientes inicial
+ // _clientListFuture = _clientService.getAllClients(); // Buscar a lista de clientes inicial
 
 
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:aesthetic_app/screens/recover_password_screen.dart';
+import 'package:app/screens/recover_password_screen.dart';
 
 class LoginPage extends StatefulWidget {
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/DateFormat.dart';
+import 'package:intl/intl.dart';
 import 'package:app/models/client.dart';
 import 'package:app/screens/client_edit_screen.dart';
 

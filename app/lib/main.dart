@@ -5,8 +5,8 @@ import 'package:app/screens/client_list_screen.dart';
 import 'package:app/screens/client_details_screen.dart';
 import 'package:app/screens/client_form_screen.dart';
 import 'package:app/screens/client_edit_screen.dart';
-import 'package:app/screens/settings_screen.dart';
-import 'package:app/screens/about_screen.dart';
+//import 'package:app/screens/settings_screen.dart';
+//import 'package:app/screens/about_screen.dart';
 import 'package:app/models/client.dart';
 
 
@@ -70,19 +70,19 @@ return MaterialApp(
 
 
 
-'/clientDetails': (context) => const ClientDetailsScreen(client:null,), // Passar um cliente
+//'/clientDetails': (context) => const ClientDetailsScreen(client:null,), // Passar um cliente
 
 
 
 
-        '/clientEdit': (context) => const ClientEditScreen(client:null,),// Passar um cliente
+//        '/clientEdit': (context) => const ClientEditScreen(client:null,),// Passar um cliente
 
 
-'/settings': (context) => const SettingsScreen(),
+//'/settings': (context) => const SettingsScreen(),
 
 
 
-       '/about': (context) => const AboutScreen(),
+//       '/about': (context) => const AboutScreen(),
 
 
 
