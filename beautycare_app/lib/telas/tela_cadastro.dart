@@ -9,9 +9,9 @@ class TelaCadastro extends StatefulWidget {
 }
 
 class _TelaCadastroState extends State<TelaCadastro> {
-  // Lista de clientes ver como fazer depois
+  // Lista de clientes (ver como fazer depois)
   List<String> clientes = [];
-  //campo de pesquisa
+  // Campo de pesquisa
   final TextEditingController _controladorPesquisa = TextEditingController();
 
   @override
@@ -21,12 +21,16 @@ class _TelaCadastroState extends State<TelaCadastro> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFDB9B83),
         elevation: 0, // Remove a sombra
-        leading: IconButton(
-          icon: Image.asset('assets/imagens/logo.png'),
-          onPressed: () {
-            //voltar para a tela de Menu
-            Navigator.pop(context);
-          },
+        toolbarHeight: 120, // Aumenta a altura da AppBar
+        leadingWidth: 150, // Ajusta a largura do espaço do leading
+        leading: Padding(
+          padding: const EdgeInsets.all(0.0), // Espaçamento ao redor da imagem
+          child: Image.asset(
+            'assets/imagens/logo.png', // Caminho da logo
+            width: 100, // Largura da imagem
+            height: 100, // Altura da imagem
+            fit: BoxFit.contain, // Garante que a imagem mantenha proporções
+          ),
         ),
         actions: [
           IconButton(
@@ -49,9 +53,9 @@ class _TelaCadastroState extends State<TelaCadastro> {
             child: TextField(
               controller: _controladorPesquisa,
               onChanged: (texto) {
-                // filtrar a lista de clientes
+                // Filtrar a lista de clientes
                 setState(() {
-                  // Att a lista de clientes visível
+                  // Atualiza a lista de clientes visível
                   clientes = clientes
                       .where((cliente) =>
                           cliente.toLowerCase().contains(texto.toLowerCase()))

@@ -9,7 +9,8 @@ class TelaLogin extends StatefulWidget {
 }
 
 class _TelaLoginState extends State<TelaLogin> {
-  final _formKey = GlobalKey<FormState>(); // Adicionando chave para o formulário
+  final _formKey =
+      GlobalKey<FormState>(); // Adicionando chave para o formulário
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
 
@@ -25,7 +26,8 @@ class _TelaLoginState extends State<TelaLogin> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 32.0),
-                child: Image.asset('assets/imagens/logo.png'), // Substituir logo
+                child:
+                    Image.asset('assets/imagens/logo.png'), // Substituir logo
               ),
               // Formulário de login
               Padding(
@@ -76,11 +78,13 @@ class _TelaLoginState extends State<TelaLogin> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 24.0), // Espaço entre o campo e o botão
+                      const SizedBox(
+                          height: 24.0), // Espaço entre o campo e o botão
                       // Botão de Login
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF966C5C), // Cor do botão
+                          backgroundColor:
+                              const Color(0xFF966C5C), // Cor do botão
                           padding: const EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
                           textStyle: const TextStyle(fontSize: 18),

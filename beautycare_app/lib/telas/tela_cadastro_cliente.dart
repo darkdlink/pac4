@@ -98,7 +98,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
     }
   }
 
-  // Função para construir um campo de texto
+  // Função para construir um campo de texto que expande dinamicamente
   Widget _construirCampoTexto(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -108,6 +108,9 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
           labelText: label,
           border: const OutlineInputBorder(),
         ),
+        keyboardType: TextInputType.multiline, // Permite múltiplas linhas
+        maxLines: null, // Não limita o número de linhas
+        minLines: 1, // O mínimo é uma linha
       ),
     );
   }

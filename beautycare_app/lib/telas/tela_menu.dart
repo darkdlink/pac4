@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beautycare_app/telas/tela_cadastro.dart'; // Importe a tela de cadastro
 import 'package:beautycare_app/telas/tela_aniversario.dart'; // Importe a tela de aniversário
+import 'package:beautycare_app/telas/tela_login.dart'; // Importe a tela de login (caso o logout redirecione para ela)
 
 class TelaMenu extends StatelessWidget {
   const TelaMenu({super.key});
@@ -12,17 +13,29 @@ class TelaMenu extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFFDB9B83),
         elevation: 0, // Remove a sombra
-        leading: IconButton(
-          icon: SizedBox(
-            width: 500, // largura
-            height: 500, //altura
-            child: Image.asset('assets/imagens/logo.png'),
+        toolbarHeight: 120, // Aumenta a altura da AppBar
+        leadingWidth: 150, // Ajusta a largura do espaço do leading
+        leading: Padding(
+          padding: const EdgeInsets.all(0.0), // Espaçamento ao redor da imagem
+          child: Image.asset(
+            'assets/imagens/logo.png', // Caminho da logo
+            width: 100, // Largura da imagem
+            height: 100, // Altura da imagem
+            fit: BoxFit.contain, // Garante que a imagem mantenha proporções
           ),
-          onPressed: () {
-            //voltar para a tela de login
-            Navigator.pop(context);
-          },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, size: 30), // Ícone de logout
+            onPressed: () {
+              // Redireciona para a tela de login quando o botão de logout for pressionado
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const TelaLogin()),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
