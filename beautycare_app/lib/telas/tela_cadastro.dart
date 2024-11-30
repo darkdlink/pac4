@@ -41,7 +41,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
             fit: BoxFit.contain, // Garante que a imagem mantenha proporções
           ),
         ),
-        actions: [
+        actions: const [
           // Removemos o botão de adicionar cliente da AppBar
         ],
       ),

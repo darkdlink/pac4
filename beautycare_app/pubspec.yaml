@@ -38,6 +38,16 @@ dependencies:
   # Adicionando a dependência image_picker
   image_picker: ^0.8.7+4  # Verifique sempre a versão mais recente em https://pub.dev/packages/image_picker
 
+  # Adicionando pacotes para gerar PDF e imprimir
+  pdf: ^3.6.0
+  printing: ^5.6.0
+
+  # Adicionando o path_provider para acessar o sistema de arquivos
+  path_provider: ^2.0.11  # Verifique se esta é a versão mais recente
+
+  # Pacote para gerar e converter arquivos CSV
+  csv: ^5.0.0  # Verifique se essa linha está presente, e se necessário, ajuste a versão.
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -59,6 +69,7 @@ flutter:
   # classe material Icons.
   uses-material-design: true
 
+  # Definindo assets de imagens
   assets:
     - assets/imagens/
 
