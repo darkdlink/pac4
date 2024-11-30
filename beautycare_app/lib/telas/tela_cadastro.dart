@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beautycare_app/telas/tela_menu.dart'; // Importe a tela de menu
 import 'package:beautycare_app/telas/tela_cadastro_cliente.dart'; // Importe a tela de cadastro de cliente
 
 class TelaCadastro extends StatefulWidget {
@@ -9,8 +10,10 @@ class TelaCadastro extends StatefulWidget {
 }
 
 class _TelaCadastroState extends State<TelaCadastro> {
-  // Lista de clientes (ver como fazer depois)
-  List<String> clientes = [];
+  // Lista de clientes (ainda não há clientes cadastrados, mas simula a estrutura)
+  List<String> clientes =
+      []; // Lista vazia inicialmente, sem clientes cadastrados
+
   // Campo de pesquisa
   final TextEditingController _controladorPesquisa = TextEditingController();
 
@@ -23,8 +26,14 @@ class _TelaCadastroState extends State<TelaCadastro> {
         elevation: 0, // Remove a sombra
         toolbarHeight: 120, // Aumenta a altura da AppBar
         leadingWidth: 150, // Ajusta a largura do espaço do leading
-        leading: Padding(
-          padding: const EdgeInsets.all(0.0), // Espaçamento ao redor da imagem
+        leading: GestureDetector(
+          onTap: () {
+            // Navega de volta para a TelaMenu
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TelaMenu()),
+            );
+          },
           child: Image.asset(
             'assets/imagens/logo.png', // Caminho da logo
             width: 100, // Largura da imagem
@@ -33,17 +42,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add),
-            onPressed: () {
-              // Navega para a tela de cadastro de cliente
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const TelaCadastroCliente()),
-              );
-            },
-          ),
+          // Removemos o botão de adicionar cliente da AppBar
         ],
       ),
       body: Column(
@@ -77,20 +76,41 @@ class _TelaCadastroState extends State<TelaCadastro> {
           Expanded(
             child: Container(
               color: const Color(0xFFD09A81), // Cor de fundo da lista
-              child: ListView.builder(
-                itemCount: clientes.length,
-                itemBuilder: (context, indice) {
-                  return ListTile(
-                    leading: const CircleAvatar(
-                      child: Text('A'),
+              child: clientes.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "Nenhum cliente cadastrado",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: clientes.length,
+                      itemBuilder: (context, indice) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            // Usando a primeira letra do nome como inicial do avatar
+                            child: Text(clientes[indice][0]),
+                          ),
+                          title: Text(clientes[indice]),
+                        );
+                      },
                     ),
-                    title: Text(clientes[indice]),
-                  );
-                },
-              ),
             ),
           ),
         ],
+      ),
+      // FloatingActionButton no canto inferior direito
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navega para a tela de cadastro de cliente
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const TelaCadastroCliente()),
+          );
+        },
+        backgroundColor: const Color(0xFF966C5C),
+        child: const Icon(Icons.person_add),
       ),
     );
   }

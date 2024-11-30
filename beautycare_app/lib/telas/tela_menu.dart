@@ -37,55 +37,60 @@ class TelaMenu extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Botão Cadastro
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF966C5C),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                textStyle: const TextStyle(fontSize: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+            vertical: 30.0), // Adicionando mais padding no corpo
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Botão Cadastro
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF966C5C),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
                 ),
+                onPressed: () {
+                  // Navega para a tela de cadastro
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TelaCadastro()),
+                  );
+                },
+                child: const Text('Cadastro'),
               ),
-              onPressed: () {
-                // Navega para a tela de cadastro
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TelaCadastro()),
-                );
-              },
-              child: const Text('Cadastro'),
-            ),
-            const SizedBox(height: 30), // Espaço entre os botões
-            // Botão Aniversário
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF966C5C),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                textStyle: const TextStyle(fontSize: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+              const SizedBox(height: 30), // Espaço entre os botões
+              // Botão Aniversário
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF966C5C),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
                 ),
+                onPressed: () {
+                  // Navega para a tela de aniversário
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TelaAniversario()),
+                  );
+                },
+                child: const Text('Aniversário'),
               ),
-              onPressed: () {
-                // Navega para a tela de aniversário
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const TelaAniversario()),
-                );
-              },
-              child: const Text('Aniversário'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
