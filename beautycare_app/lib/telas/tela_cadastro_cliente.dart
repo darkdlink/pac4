@@ -1,16 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 class TelaCadastroCliente extends StatefulWidget {
-  const TelaCadastroCliente({super.key});
+  final Map<String, dynamic>? cliente;
+
+  const TelaCadastroCliente({Key? key, this.cliente}) : super(key: key);
 
   @override
   State<TelaCadastroCliente> createState() => _TelaCadastroClienteState();
 }
 
 class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
-  // Variáveis para armazenar as respostas das perguntas
+  final _formKey = GlobalKey<FormState>();
+  final ScrollController _scrollController = ScrollController();
+
+  // Controladores de texto
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _dataNascimentoController =
+      TextEditingController();
+  final TextEditingController _escolaridadeController = TextEditingController();
+  final TextEditingController _profissaoController = TextEditingController();
+  final TextEditingController _estadoCivilController = TextEditingController();
+  final TextEditingController _tratamentoController = TextEditingController();
+  final TextEditingController _intoleranciaAlimentarController =
+      TextEditingController();
+  final TextEditingController _cosmeticosController = TextEditingController();
+  final TextEditingController _alergiasController = TextEditingController();
+  final TextEditingController _patologiasController = TextEditingController();
+  final TextEditingController _disturbioHormonalController =
+      TextEditingController();
+  final TextEditingController _medicamentoController = TextEditingController();
+  final TextEditingController _deficienciaVitaminasController =
+      TextEditingController();
+  final TextEditingController _avaliacaoPeleController =
+      TextEditingController();
+  final TextEditingController _tratamentoPeleController =
+      TextEditingController();
+  final TextEditingController _produtosCasaController = TextEditingController();
+
+  // Variáveis para perguntas booleanas e escolhas
   bool? _tratamentoEstetico;
   bool? _temFilhos;
   bool? _amamentando;
@@ -22,105 +53,344 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
   bool? _fuma;
   String? _sono;
   bool? _atividadeFisica;
-  bool? _usaCosmeticos;
-  bool? _alergiasIrritacoes;
-  bool? _temQueloide;
-  bool? _peleManchaFacilidade;
-  bool? _temPatologias;
-  bool? _temDisturbioHormonal;
-  bool? _usaAnticoncepcional;
-  bool? _usoAntidepressivo;
-  bool? _deficienciaVitaminas;
-  bool? _unhasCabelosFracos;
 
-  // Controladores de texto
-  final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _escolaridadeController = TextEditingController();
-  final TextEditingController _profissaoController = TextEditingController();
-  final TextEditingController _estadoCivilController = TextEditingController();
-  final TextEditingController _medicamentoController = TextEditingController();
-  final TextEditingController _observacoesPeleController =
-      TextEditingController();
-  final TextEditingController _descricaoTratamentoController =
-      TextEditingController();
-  final TextEditingController _recomendacoesProdutosController =
-      TextEditingController();
-  final TextEditingController _dataNascimentoController =
-      TextEditingController();
-
-  // Variável para armazenar a imagem da cliente
   File? _image;
-
-  // Controlador de imagem
   final ImagePicker _picker = ImagePicker();
 
-  // Função para validar os campos obrigatórios
-  bool _validarCampos() {
-    if (_nomeController.text.isEmpty ||
-        _dataNascimentoController.text.isEmpty) {
-      return false;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.cliente != null) {
+      // Preenche os controladores com os dados existentes
+      _nomeController.text = widget.cliente!['nome'] ?? '';
+      _dataNascimentoController.text = widget.cliente!['data_nascimento'] ?? '';
+      _escolaridadeController.text = widget.cliente!['escolaridade'] ?? '';
+      _profissaoController.text = widget.cliente!['profissao'] ?? '';
+      _estadoCivilController.text = widget.cliente!['estado_civil'] ?? '';
+      _tratamentoEstetico = widget.cliente!['tratamento_estetico'];
+      _tratamentoController.text =
+          widget.cliente!['tratamento_estetico_descricao'] ?? '';
+      _temFilhos = widget.cliente!['tem_filhos'];
+      _amamentando = widget.cliente!['amamentando'];
+      _intestino = widget.cliente!['intestino'];
+      _agua = widget.cliente!['ingere_agua'];
+      _habitosAlimentares = widget.cliente!['habitos_alimentares'];
+      _intoleranciaAlimentar = widget.cliente!['intolerancia_alimentar'];
+      _intoleranciaAlimentarController.text =
+          widget.cliente!['intolerancia_alimentar_descricao'] ?? '';
+      _bebidaAlcoolica = widget.cliente!['ingere_bebida_alcoolica'];
+      _fuma = widget.cliente!['fuma'];
+      _sono = widget.cliente!['sono'];
+      _atividadeFisica = widget.cliente!['atividade_fisica'];
+      _cosmeticosController.text =
+          widget.cliente!['usa_cosmeticos_descricao'] ?? '';
+      _alergiasController.text =
+          widget.cliente!['alergias_irritacoes_descricao'] ?? '';
+      _patologiasController.text =
+          widget.cliente!['tem_patologias_descricao'] ?? '';
+      _disturbioHormonalController.text =
+          widget.cliente!['tem_disturbio_hormonal_descricao'] ?? '';
+      _medicamentoController.text =
+          widget.cliente!['uso_medicamento_descricao'] ?? '';
+      _deficienciaVitaminasController.text =
+          widget.cliente!['deficiencia_vitaminas_descricao'] ?? '';
+      _avaliacaoPeleController.text = widget.cliente!['avaliacao_pele'] ?? '';
+      _tratamentoPeleController.text = widget.cliente!['tratamento'] ?? '';
+      _produtosCasaController.text =
+          widget.cliente!['produtos_para_casa'] ?? '';
     }
-    return true;
   }
 
-  // Função para pegar a imagem da galeria ou da câmera
-  Future<void> _pickImage() async {
-    // Exibe o diálogo para o usuário escolher entre tirar foto ou pegar da galeria
-    final ImageSource? source = await showDialog<ImageSource>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Escolha uma opção'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, ImageSource.camera);
-            },
-            child: const Text('Tirar Foto'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, ImageSource.gallery);
-            },
-            child: const Text('Escolher da Galeria'),
-          ),
-        ],
-      ),
-    );
+  // Função para selecionar imagem
+  Future<void> _pickImage() async {}
 
-    if (source != null) {
-      // Pega a imagem com base na escolha do usuário
-      final XFile? pickedFile = await _picker.pickImage(source: source);
-      if (pickedFile != null) {
-        setState(() {
-          _image = File(pickedFile.path); // Armazena a imagem selecionada
-        });
+  // Função para salvar o cadastro no Supabase
+  Future<void> _salvarCadastro() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        if (widget.cliente == null) {
+          // Inserção de novo cliente
+          await Supabase.instance.client.from('cliente').insert({
+            'nome': _nomeController.text,
+            'data_nascimento': _dataNascimentoController.text,
+            'escolaridade': _escolaridadeController.text,
+            'profissao': _profissaoController.text,
+            'estado_civil': _estadoCivilController.text,
+            'tratamento_estetico': _tratamentoEstetico,
+            'tratamento_estetico_descricao': _tratamentoController.text,
+            'tem_filhos': _temFilhos,
+            'amamentando': _amamentando,
+            'intestino': _intestino,
+            'ingere_agua': _agua,
+            'habitos_alimentares': _habitosAlimentares,
+            'intolerancia_alimentar': _intoleranciaAlimentar,
+            'intolerancia_alimentar_descricao':
+                _intoleranciaAlimentarController.text,
+            'ingere_bebida_alcoolica': _bebidaAlcoolica,
+            'fuma': _fuma,
+            'sono': _sono,
+            'atividade_fisica': _atividadeFisica,
+            'usa_cosmeticos_descricao': _cosmeticosController.text,
+            'alergias_irritacoes_descricao': _alergiasController.text,
+            'tem_patologias_descricao': _patologiasController.text,
+            'tem_disturbio_hormonal_descricao':
+                _disturbioHormonalController.text,
+            'uso_medicamento_descricao': _medicamentoController.text,
+            'deficiencia_vitaminas_descricao':
+                _deficienciaVitaminasController.text,
+            'avaliacao_pele': _avaliacaoPeleController.text,
+            'tratamento': _tratamentoPeleController.text,
+            'produtos_para_casa': _produtosCasaController.text,
+          });
+        } else {
+          // Atualização de cliente existente
+          await Supabase.instance.client.from('cliente').update({
+            'nome': _nomeController.text,
+            'data_nascimento': _dataNascimentoController.text,
+            'escolaridade': _escolaridadeController.text,
+            'profissao': _profissaoController.text,
+            'estado_civil': _estadoCivilController.text,
+            'tratamento_estetico': _tratamentoEstetico,
+            'tratamento_estetico_descricao': _tratamentoController.text,
+            'tem_filhos': _temFilhos,
+            'amamentando': _amamentando,
+            'intestino': _intestino,
+            'ingere_agua': _agua,
+            'habitos_alimentares': _habitosAlimentares,
+            'intolerancia_alimentar': _intoleranciaAlimentar,
+            'intolerancia_alimentar_descricao':
+                _intoleranciaAlimentarController.text,
+            'ingere_bebida_alcoolica': _bebidaAlcoolica,
+            'fuma': _fuma,
+            'sono': _sono,
+            'atividade_fisica': _atividadeFisica,
+            'usa_cosmeticos_descricao': _cosmeticosController.text,
+            'alergias_irritacoes_descricao': _alergiasController.text,
+            'tem_patologias_descricao': _patologiasController.text,
+            'tem_disturbio_hormonal_descricao':
+                _disturbioHormonalController.text,
+            'uso_medicamento_descricao': _medicamentoController.text,
+            'deficiencia_vitaminas_descricao':
+                _deficienciaVitaminasController.text,
+            'avaliacao_pele': _avaliacaoPeleController.text,
+            'tratamento': _tratamentoPeleController.text,
+            'produtos_para_casa': _produtosCasaController.text,
+          }).eq('id', widget.cliente!['id']);
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cadastro salvo com sucesso!')),
+          );
+          Navigator.pop(context, {
+            // Retorna os dados atualizados
+            ...widget.cliente ?? {},
+            'nome': _nomeController.text,
+            'data_nascimento': _dataNascimentoController.text,
+            'escolaridade': _escolaridadeController.text,
+            'profissao': _profissaoController.text,
+            'estado_civil': _estadoCivilController.text,
+            'tratamento_estetico': _tratamentoEstetico,
+            'tratamento_estetico_descricao': _tratamentoController.text,
+            'tem_filhos': _temFilhos,
+            'amamentando': _amamentando,
+            'intestino': _intestino,
+            'ingere_agua': _agua,
+            'habitos_alimentares': _habitosAlimentares,
+            'intolerancia_alimentar': _intoleranciaAlimentar,
+            'intolerancia_alimentar_descricao':
+                _intoleranciaAlimentarController.text,
+            'ingere_bebida_alcoolica': _bebidaAlcoolica,
+            'fuma': _fuma,
+            'sono': _sono,
+            'atividade_fisica': _atividadeFisica,
+            'usa_cosmeticos_descricao': _cosmeticosController.text,
+            'alergias_irritacoes_descricao': _alergiasController.text,
+            'tem_patologias_descricao': _patologiasController.text,
+            'tem_disturbio_hormonal_descricao':
+                _disturbioHormonalController.text,
+            'uso_medicamento_descricao': _medicamentoController.text,
+            'deficiencia_vitaminas_descricao':
+                _deficienciaVitaminasController.text,
+            'avaliacao_pele': _avaliacaoPeleController.text,
+            'tratamento': _tratamentoPeleController.text,
+            'produtos_para_casa': _produtosCasaController.text,
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro ao salvar cliente: $e')),
+          );
+        }
       }
     }
   }
 
-  // Função para construir um campo de texto que expande dinamicamente
-  Widget _construirCampoTexto(String label, TextEditingController controller) {
+  // Construção da interface
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+            widget.cliente == null ? 'Cadastro de Cliente' : 'Editar Cliente'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Sai sem salvar
+            },
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Form(
+            key: _formKey,
+            child: ListView(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                // Implementação do campo de foto se desejar
+
+                // Perguntas de Identificação
+                _buildTextField('Nome Completo', _nomeController),
+                _buildDatePickerField(
+                    'Data de Nascimento', _dataNascimentoController),
+                _buildTextField('Escolaridade', _escolaridadeController),
+                _buildTextField('Profissão', _profissaoController),
+                _buildTextField('Estado Civil', _estadoCivilController),
+
+                // Perguntas de Avaliação
+                _buildBooleanQuestion(
+                  'Já realizou algum tratamento estético?',
+                  _tratamentoEstetico,
+                  onChanged: (value) =>
+                      setState(() => _tratamentoEstetico = value),
+                  hasTextField: true,
+                  textController: _tratamentoController,
+                ),
+                _buildBooleanQuestion(
+                  'Tem filhos?',
+                  _temFilhos,
+                  onChanged: (value) => setState(() => _temFilhos = value),
+                ),
+                _buildBooleanQuestion(
+                  'Está amamentando?',
+                  _amamentando,
+                  onChanged: (value) => setState(() => _amamentando = value),
+                ),
+                _buildRadioQuestion(
+                  'Como funciona seu intestino?',
+                  ['Ótimo', 'Bom', 'Regular'],
+                  selectedValue: _intestino,
+                  onChanged: (value) => setState(() => _intestino = value),
+                ),
+                _buildRadioQuestion(
+                  'Ingere água?',
+                  ['Muito', 'Médio', 'Pouco'],
+                  selectedValue: _agua,
+                  onChanged: (value) => setState(() => _agua = value),
+                ),
+                _buildRadioQuestion(
+                  'Hábitos alimentares?',
+                  ['Saudável', 'Regular', 'Péssimo'],
+                  selectedValue: _habitosAlimentares,
+                  onChanged: (value) =>
+                      setState(() => _habitosAlimentares = value),
+                ),
+                _buildBooleanQuestion(
+                  'Possui intolerância alimentar?',
+                  _intoleranciaAlimentar,
+                  onChanged: (value) =>
+                      setState(() => _intoleranciaAlimentar = value),
+                  hasTextField: true,
+                  textController: _intoleranciaAlimentarController,
+                ),
+                _buildBooleanQuestion(
+                  'Ingere bebida alcoólica?',
+                  _bebidaAlcoolica,
+                  onChanged: (value) =>
+                      setState(() => _bebidaAlcoolica = value),
+                ),
+                _buildBooleanQuestion(
+                  'Fuma?',
+                  _fuma,
+                  onChanged: (value) => setState(() => _fuma = value),
+                ),
+                _buildRadioQuestion(
+                  'Como é o seu sono?',
+                  ['Bom', 'Regular', 'Ruim'],
+                  selectedValue: _sono,
+                  onChanged: (value) => setState(() => _sono = value),
+                ),
+                _buildBooleanQuestion(
+                  'Pratica atividade física?',
+                  _atividadeFisica,
+                  onChanged: (value) =>
+                      setState(() => _atividadeFisica = value),
+                ),
+                _buildTextField('Avaliação da pele', _avaliacaoPeleController),
+                _buildTextField('Tratamento', _tratamentoPeleController),
+                _buildTextField(
+                    'Produtos para usar em casa', _produtosCasaController),
+
+                // Botão de Salvar
+                ElevatedButton(
+                  onPressed: _salvarCadastro,
+                  child: const Text('Salvar Cadastro'),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: const Icon(Icons.arrow_upward),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
-        keyboardType: TextInputType.multiline, // Permite múltiplas linhas
-        maxLines: null, // Não limita o número de linhas
-        minLines: 1, // O mínimo é uma linha
+        maxLines: null,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Campo obrigatório';
+          }
+          return null;
+        },
       ),
     );
   }
 
-  // Função para construir um campo de data
-  Widget _construirCampoData(String label, TextEditingController controller) {
+  Widget _buildDatePickerField(String label, TextEditingController controller) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextFormField(
         controller: controller,
+        readOnly: true,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
@@ -129,252 +399,87 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
         onTap: () async {
           DateTime? selectedDate = await showDatePicker(
             context: context,
-            initialDate: DateTime.now(),
+            initialDate: controller.text.isNotEmpty
+                ? DateFormat('yyyy-MM-dd').parse(controller.text)
+                : DateTime.now(),
             firstDate: DateTime(1900),
-            lastDate: DateTime.now(),
+            lastDate: DateTime(2100),
           );
           if (selectedDate != null) {
-            setState(() {
-              controller.text = '${selectedDate.toLocal()}'.split(' ')[0];
-            });
+            controller.text = DateFormat('yyyy-MM-dd').format(selectedDate);
           }
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Campo obrigatório';
+          }
+          return null;
         },
       ),
     );
   }
 
-  // Função para construir perguntas com respostas Sim/Não
-  Widget _construirPerguntaSimNao(String pergunta, bool? resposta) {
+  Widget _buildBooleanQuestion(
+    String question,
+    bool? value, {
+    required ValueChanged<bool?> onChanged,
+    bool hasTextField = false,
+    TextEditingController? textController,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Text(pergunta),
-          const Spacer(),
-          Row(
-            children: [
-              Radio<bool>(
-                value: true,
-                groupValue: resposta,
-                onChanged: (value) {
-                  setState(() {
-                    resposta = value;
-                  });
-                },
-              ),
-              const Text('Sim'),
-              Radio<bool>(
-                value: false,
-                groupValue: resposta,
-                onChanged: (value) {
-                  setState(() {
-                    resposta = value;
-                  });
-                },
-              ),
-              const Text('Não'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Função para construir perguntas com múltiplas opções (RadioListTile)
-  Widget _construirPerguntaOpcoes(
-      String pergunta, List<String> opcoes, String? resposta) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(pergunta),
-          const SizedBox(height: 8),
-          Wrap(
-            children: opcoes
-                .map((opcao) => Expanded(
-                      child: RadioListTile<String>(
-                        title: Text(opcao),
-                        value: opcao,
-                        groupValue: resposta,
-                        onChanged: (value) {
-                          setState(() {
-                            resposta = value;
-                          });
-                        },
-                      ),
-                    ))
-                .toList(),
+          Text(question),
+          Row(
+            children: [
+              Expanded(
+                child: RadioListTile<bool>(
+                  title: const Text('Sim'),
+                  value: true,
+                  groupValue: value,
+                  onChanged: onChanged,
+                ),
+              ),
+              Expanded(
+                child: RadioListTile<bool>(
+                  title: const Text('Não'),
+                  value: false,
+                  groupValue: value,
+                  onChanged: onChanged,
+                ),
+              ),
+            ],
           ),
+          if (hasTextField && value == true && textController != null)
+            _buildTextField('Descrição', textController),
         ],
       ),
     );
   }
 
-  // Função para o botão de salvar com validação
-  Widget _construirBotaoSalvar() {
-    return ElevatedButton(
-      onPressed: () {
-        if (_validarCampos()) {
-          // Aqui você pode navegar para outra tela ou salvar os dados
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Cadastro concluído com sucesso!')));
-        } else {
-          // Exibe uma mensagem de erro
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content:
-                  Text('Por favor, preencha todos os campos obrigatórios!')));
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20, // Menos padding para um botão menor
-          vertical: 10, // Menor altura
-        ),
-        backgroundColor: const Color(0xFF966C5C), // Cor do botão
-      ),
-      child: const Text(
-        'Salvar Cadastro',
-        style: TextStyle(fontSize: 16), // Menor fonte
-      ),
-    );
-  }
-
-  // Controlador de rolagem
-  final ScrollController _scrollController = ScrollController();
-
-  // Função para rolar para o topo
-  void _rolarParaTopo() {
-    _scrollController.animateTo(
-      0.0, // Rolando para o topo
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Volta para a tela anterior
-          },
-        ),
-        title: const Text('Cadastro de Cliente'),
-        backgroundColor: const Color(0xFFDB9B83),
-      ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Círculo de avatar, onde pode adicionar ou alterar a foto
-              GestureDetector(
-                onTap: _pickImage, // Ao clicar, abre a escolha de imagem
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _image != null
-                      ? FileImage(
-                          _image!) // Se uma imagem for escolhida, exibe a imagem
-                      : const AssetImage('assets/imagens/foto_cliente.png')
-                          as ImageProvider, // Imagem padrão caso não tenha sido escolhida
-                ),
-              ),
-              const SizedBox(height: 20),
-              _construirCampoTexto('Nome', _nomeController),
-              _construirCampoData(
-                  'Data de Nascimento', _dataNascimentoController),
-              _construirCampoTexto('Escolaridade', _escolaridadeController),
-              _construirCampoTexto('Profissão', _profissaoController),
-              _construirCampoTexto('Estado Civil', _estadoCivilController),
-              const SizedBox(height: 20),
-              const Text(
-                'Consulta Avaliativa Integrativa',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              _construirPerguntaSimNao('Já realizou algum tratamento estético?',
-                  _tratamentoEstetico),
-              _construirPerguntaSimNao('Tem filhos?', _temFilhos),
-              _construirPerguntaSimNao('Está amamentando?', _amamentando),
-              _construirPerguntaOpcoes('Como funciona seu intestino',
-                  ['Ótimo', 'Bom', 'Regular'], _intestino),
-              _construirPerguntaOpcoes(
-                  'Ingere água?', ['Muito', 'Médio', 'Pouco'], _agua),
-              _construirPerguntaOpcoes('Hábitos alimentares?',
-                  ['Saudável', 'Regular', 'Péssimo'], _habitosAlimentares),
-              _construirPerguntaSimNao(
-                  'Possui intolerância alimentar?', _intoleranciaAlimentar),
-              _construirPerguntaSimNao(
-                  'Ingere bebida alcoólica?', _bebidaAlcoolica),
-              _construirPerguntaSimNao('Fuma?', _fuma),
-              _construirPerguntaOpcoes(
-                  'Como é o seu sono?', ['Bom', 'Regular', 'Ruim'], _sono),
-              _construirPerguntaSimNao(
-                  'Pratica atividade física?', _atividadeFisica),
-              _construirPerguntaSimNao('Usa cosméticos?', _usaCosmeticos),
-              _construirPerguntaSimNao(
-                  'Tem alergias ou irritações?', _alergiasIrritacoes),
-              _construirPerguntaSimNao('Tem queloide?', _temQueloide),
-              _construirPerguntaSimNao(
-                  'Pele mancha com facilidade?', _peleManchaFacilidade),
-              _construirPerguntaSimNao('Tem patologias?', _temPatologias),
-              _construirPerguntaSimNao(
-                  'Tem distúrbio hormonal?', _temDisturbioHormonal),
-              _construirPerguntaSimNao(
-                  'Usa anticoncepcional?', _usaAnticoncepcional),
-              _construirPerguntaSimNao(
-                  'Uso de Antidepressivo?', _usoAntidepressivo),
-              _construirCampoTexto(
-                  'Faz uso de medicamento?', _medicamentoController),
-              _construirPerguntaSimNao(
-                  'Possui deficiência de vitaminas?', _deficienciaVitaminas),
-              _construirPerguntaSimNao(
-                  'Unhas e cabelos fracos?', _unhasCabelosFracos),
-              const SizedBox(height: 20),
-              const Text(
-                'Avaliação da pele',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              _construirCampoTexto(
-                  'Observações sobre a pele', _observacoesPeleController),
-              const SizedBox(height: 20),
-              const Text(
-                'Tratamento',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              _construirCampoTexto(
-                  'Descrição do tratamento', _descricaoTratamentoController),
-              const SizedBox(height: 20),
-              const Text(
-                'Produtos para usar em casa',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const Divider(),
-              _construirCampoTexto('Recomendações de produtos',
-                  _recomendacoesProdutosController),
-              const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Seta que volta para o topo
-                  IconButton(
-                    icon: const Icon(Icons.arrow_upward),
-                    onPressed: _rolarParaTopo,
-                  ),
-                  // Botão de salvar
-                  _construirBotaoSalvar(),
-                ],
-              ),
-            ],
-          ),
-        ),
+  Widget _buildRadioQuestion(
+    String question,
+    List<String> options, {
+    required String? selectedValue,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(question),
+          ...options.map((option) {
+            return RadioListTile<String>(
+              title: Text(option),
+              value: option,
+              groupValue: selectedValue,
+              onChanged: onChanged,
+            );
+          }).toList(),
+        ],
       ),
     );
   }

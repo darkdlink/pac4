@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:beautycare_app/telas/tela_menu.dart'; // Importe a tela de menu
-import 'package:beautycare_app/telas/tela_cadastro_cliente.dart'; // Importe a tela de cadastro de cliente
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'tela_menu.dart';
+import 'tela_cadastro_cliente.dart';
+import 'tela_cliente.dart';
 
 class TelaCadastro extends StatefulWidget {
   const TelaCadastro({super.key});
@@ -10,12 +12,64 @@ class TelaCadastro extends StatefulWidget {
 }
 
 class _TelaCadastroState extends State<TelaCadastro> {
-  // Lista de clientes (ainda não há clientes cadastrados, mas simula a estrutura)
-  List<String> clientes =
-      []; // Lista vazia inicialmente, sem clientes cadastrados
+  // Lista de clientes
+  List<Map<String, dynamic>> clientes = [];
+  List<Map<String, dynamic>> clientesFiltrados = [];
 
-  // Campo de pesquisa
   final TextEditingController _controladorPesquisa = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarClientes();
+  }
+
+  Future<void> _carregarClientes() async {
+    try {
+      final data = await Supabase.instance.client.from('cliente').select();
+
+      setState(() {
+        clientes = List<Map<String, dynamic>>.from(data);
+        clientesFiltrados = clientes;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar clientes: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _excluirCliente(int id) async {
+    try {
+      await Supabase.instance.client.from('cliente').delete().eq('id', id);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cliente excluído com sucesso!')),
+        );
+      }
+
+      // Recarrega a lista de clientes após a exclusão
+      await _carregarClientes();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao excluir cliente: $e')),
+        );
+      }
+    }
+  }
+
+  void _filtrarClientes(String texto) {
+    setState(() {
+      clientesFiltrados = clientes.where((cliente) {
+        final nome = cliente['nome'] ?? '';
+        return nome.toLowerCase().contains(texto.toLowerCase());
+      }).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,27 +77,23 @@ class _TelaCadastroState extends State<TelaCadastro> {
       backgroundColor: const Color(0xFFDB9B83),
       appBar: AppBar(
         backgroundColor: const Color(0xFFDB9B83),
-        elevation: 0, // Remove a sombra
-        toolbarHeight: 120, // Aumenta a altura da AppBar
-        leadingWidth: 150, // Ajusta a largura do espaço do leading
+        elevation: 0,
+        toolbarHeight: 120,
+        leadingWidth: 150,
         leading: GestureDetector(
           onTap: () {
-            // Navega de volta para a TelaMenu
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const TelaMenu()),
             );
           },
           child: Image.asset(
-            'assets/imagens/logo.png', // Caminho da logo
-            width: 100, // Largura da imagem
-            height: 100, // Altura da imagem
-            fit: BoxFit.contain, // Garante que a imagem mantenha proporções
+            'assets/imagens/logo.png',
+            width: 100,
+            height: 100,
+            fit: BoxFit.contain,
           ),
         ),
-        actions: const [
-          // Removemos o botão de adicionar cliente da AppBar
-        ],
       ),
       body: Column(
         children: [
@@ -51,16 +101,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _controladorPesquisa,
-              onChanged: (texto) {
-                // Filtrar a lista de clientes
-                setState(() {
-                  // Atualiza a lista de clientes visível
-                  clientes = clientes
-                      .where((cliente) =>
-                          cliente.toLowerCase().contains(texto.toLowerCase()))
-                      .toList();
-                });
-              },
+              onChanged: _filtrarClientes,
               decoration: InputDecoration(
                 hintText: 'Pesquisar cliente',
                 prefixIcon: const Icon(Icons.search),
@@ -75,8 +116,8 @@ class _TelaCadastroState extends State<TelaCadastro> {
           ),
           Expanded(
             child: Container(
-              color: const Color(0xFFD09A81), // Cor de fundo da lista
-              child: clientes.isEmpty
+              color: const Color(0xFFD09A81),
+              child: clientesFiltrados.isEmpty
                   ? const Center(
                       child: Text(
                         "Nenhum cliente cadastrado",
@@ -84,14 +125,63 @@ class _TelaCadastroState extends State<TelaCadastro> {
                       ),
                     )
                   : ListView.builder(
-                      itemCount: clientes.length,
+                      itemCount: clientesFiltrados.length,
                       itemBuilder: (context, indice) {
+                        final cliente = clientesFiltrados[indice];
+                        final imagemUrl = cliente['imagem_url'];
+                        final nome = cliente['nome'] ?? 'Sem nome';
+                        final id = cliente['id'];
+
                         return ListTile(
-                          leading: CircleAvatar(
-                            // Usando a primeira letra do nome como inicial do avatar
-                            child: Text(clientes[indice][0]),
+                          leading: imagemUrl != null
+                              ? CircleAvatar(
+                                  backgroundImage: NetworkImage(imagemUrl),
+                                )
+                              : const CircleAvatar(
+                                  child: Icon(Icons.person),
+                                ),
+                          title: Text(
+                            nome,
+                            style: const TextStyle(color: Colors.white),
                           ),
-                          title: Text(clientes[indice]),
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    TelaCliente(cliente: cliente),
+                              ),
+                            );
+                            // Recarrega a lista de clientes ao retornar
+                            _carregarClientes();
+                          },
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              // Confirmação antes de excluir
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Confirmar exclusão'),
+                                  content: Text(
+                                      'Deseja realmente excluir o cliente "$nome"?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        _excluirCliente(id);
+                                      },
+                                      child: const Text('Excluir'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
@@ -99,15 +189,17 @@ class _TelaCadastroState extends State<TelaCadastro> {
           ),
         ],
       ),
-      // FloatingActionButton no canto inferior direito
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navega para a tela de cadastro de cliente
-          Navigator.push(
+        onPressed: () async {
+          // Navega para a tela de cadastro e recarrega os clientes ao voltar
+          await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => const TelaCadastroCliente()),
           );
+          if (mounted) {
+            await _carregarClientes();
+          }
         },
         backgroundColor: const Color(0xFF966C5C),
         child: const Icon(Icons.person_add),

@@ -1,102 +1,54 @@
-name: beautycare_app
-description: "A new Flutter project."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+name: beautycare_app  # Nome do seu projeto
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
+description: "A new Flutter project."
+publish_to: 'none'  # Remover esta linha se não for publicar
+
 version: 1.0.0+1
 
 environment:
   sdk: ^3.5.3
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # Supabase for database
+  supabase_flutter: ^2.8.1  # Certifique-se de que essa é a versão mais recente
+
+  # HTTP requests package (optional, but recommended for handling errors)
+  http: ^1.1.0
+
+  # Cupertino Icons for iOS style icons
   cupertino_icons: ^1.0.8
 
-  # Adicionando a dependência image_picker
-  image_picker: ^0.8.7+4  # Verifique sempre a versão mais recente em https://pub.dev/packages/image_picker
+  # Image Picker for selecting images
+  image_picker: ^1.1.2  # Verifique sempre a versão mais recente
 
-  # Adicionando pacotes para gerar PDF e imprimir
+  # PDF and printing libraries
   pdf: ^3.6.0
   printing: ^5.6.0
 
-  # Adicionando o path_provider para acessar o sistema de arquivos
-  path_provider: ^2.0.11  # Verifique se esta é a versão mais recente
+  # Path provider for accessing filesystem
+  path_provider: ^2.0.11  # Certifique-se de que essa é a versão mais recente
 
-  # Pacote para gerar e converter arquivos CSV
-  csv: ^5.0.0  # Verifique se essa linha está presente, e se necessário, ajuste a versão.
+  # CSV handling package
+  csv: ^6.0.0
+
+  # Internationalization (intl)
+  intl: ^0.20.1  # Verifique se é a versão mais recente
+
+  # Shared Preferences
+  shared_preferences: ^2.0.0  # Adicione esta linha
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # O pacote "flutter_lints" abaixo contém um conjunto de linting recomendado para
-  # incentivar boas práticas de codificação. O conjunto de linting fornecido pelo pacote é
-  # ativado no arquivo `analysis_options.yaml` localizado no diretório raiz do seu pacote.
-  # Veja esse arquivo para informações sobre desativar regras de lint específicas e ativar outras.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0  # Adiciona a dependência do linting do Flutter
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
-
-  # A linha a seguir garante que o Material Icons font seja
-  # incluída no seu aplicativo, para que você possa usar os ícones na
-  # classe material Icons.
   uses-material-design: true
 
-  # Definindo assets de imagens
+  # Configuração para assets (imagens)
   assets:
     - assets/imagens/
-
-  # Para adicionar assets ao seu aplicativo, adicione uma seção assets, como esta:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
-  # Um asset de imagem pode referir-se a uma ou mais variantes "específicas de resolução",
-  # veja https://flutter.dev/to/resolution-aware-images
-
-  # Para detalhes sobre como adicionar assets de pacotes dependentes, veja
-  # https://flutter.dev/to/asset-from-package
-
-  # Para adicionar fontes personalizadas ao seu aplicativo, adicione uma seção fonts aqui,
-  # nesta seção "flutter". Cada entrada nesta lista deve ter uma chave "family" com o nome da família de fontes,
-  # e uma chave "fonts" com uma lista dando o asset e outros descritores para a fonte. Por exemplo:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # Para detalhes sobre fontes de pacotes dependentes, veja https://flutter.dev/to/font-from-package

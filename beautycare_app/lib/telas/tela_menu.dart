@@ -13,22 +13,22 @@ class TelaMenu extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFFDB9B83),
         elevation: 0, // Remove a sombra
-        toolbarHeight: 120, // Aumenta a altura da AppBar
-        leadingWidth: 150, // Ajusta a largura do espaço do leading
+        toolbarHeight: 120, // altura da AppBar
+        leadingWidth: 150, // largura do espaço do leading
         leading: Padding(
           padding: const EdgeInsets.all(0.0), // Espaçamento ao redor da imagem
           child: Image.asset(
             'assets/imagens/logo.png', // Caminho da logo
             width: 100, // Largura da imagem
             height: 100, // Altura da imagem
-            fit: BoxFit.contain, // Garante que a imagem mantenha proporções
+            fit: BoxFit.contain, // imagem mantenha proporções
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, size: 30), // Ícone de logout
+            icon: const Icon(Icons.logout, size: 30), // logout
             onPressed: () {
-              // Redireciona para a tela de login quando o botão de logout for pressionado
+              // Redireciona para a tela de login
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const TelaLogin()),
@@ -39,7 +39,7 @@ class TelaMenu extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
-            vertical: 30.0), // Adicionando mais padding no corpo
+            vertical: 30.0), // Adic mais padding no corpo
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
