@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class TelaCadastroCliente extends StatefulWidget {
   final Map<String, dynamic>? cliente;
 
-  const TelaCadastroCliente({Key? key, this.cliente}) : super(key: key);
+  const TelaCadastroCliente({super.key, this.cliente});
 
   @override
   State<TelaCadastroCliente> createState() => _TelaCadastroClienteState();
@@ -478,7 +478,7 @@ class _TelaCadastroClienteState extends State<TelaCadastroCliente> {
               groupValue: selectedValue,
               onChanged: onChanged,
             );
-          }).toList(),
+          }),
         ],
       ),
     );

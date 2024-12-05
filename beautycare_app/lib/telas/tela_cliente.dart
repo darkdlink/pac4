@@ -11,7 +11,7 @@ import 'tela_cadastro_cliente.dart'; // Importa a tela de cadastro e tambem edi√
 class TelaCliente extends StatefulWidget {
   final Map<String, dynamic> cliente;
 
-  const TelaCliente({Key? key, required this.cliente}) : super(key: key);
+  const TelaCliente({super.key, required this.cliente});
 
   @override
   _TelaClienteState createState() => _TelaClienteState();

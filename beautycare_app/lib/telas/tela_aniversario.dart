@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TelaAniversario extends StatefulWidget {
-  const TelaAniversario({Key? key}) : super(key: key);
+  const TelaAniversario({super.key});
 
   @override
   TelaAniversarioState createState() => TelaAniversarioState();
