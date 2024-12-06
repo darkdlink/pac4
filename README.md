@@ -62,7 +62,8 @@ Vídeo de Gravação do APP :
 
 Um vídeo foi criado para demonstrar a navegação pelo BeautyCare App, destacando suas principais funcionalidades. A gravação da tela com narração está disponível neste link:
 
- link do vídeo : 
+
+ link do vídeo : https://youtu.be/gvyv8XmFkL8
 
 
 Link do Confluence e Jira:
